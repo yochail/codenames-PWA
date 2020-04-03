@@ -1,58 +1,43 @@
 import React from 'react';
 import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
 import './App.css';
+import { StateStore } from './app/store';
+import { connect } from 'react-redux';
+import Board from './Board';
+import { Grid, Paper, Box, AppBar, Toolbar, IconButton, Typography, Button } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
-    </div>
+
+    <Box className="App">
+      <header>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width"
+        />
+        {/* <img src={logo} className="App-logo" alt="logo" /> */}
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton edge="start" color="inherit" aria-label="menu">
+              { <MenuIcon /> }
+            </IconButton>
+            <Typography variant="h6">
+              Codenames App
+          </Typography>
+            {/* <Button color="inherit">Login</Button> */}
+          </Toolbar>
+        </AppBar>
+      </header >
+      <Paper elevation={3} style={{paddingTop:'10%',paddingBottom:'10%'}}>
+        <Grid container alignItems='center'>
+          <Board></Board>
+        </Grid>
+      </Paper>
+    </Box>
   );
 }
+
 
 export default App;
