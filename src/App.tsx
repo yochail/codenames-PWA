@@ -24,7 +24,7 @@ const App = () => {
               { <MenuIcon /> }
             </IconButton>
             <Typography variant="h6">
-              Codenames App
+              Codenames
           </Typography>
             {/* <Button color="inherit">Login</Button> */}
           </Toolbar>

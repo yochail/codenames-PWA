@@ -1,45 +1,44 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Card, Typography, Grid } from '@material-ui/core';
-import { GameCardState, StateStore } from './app/store';
-import { useSelector } from 'react-redux';
-import { boardSlice, cardSlice } from './app/slices';
-
+import { GameCardState } from './app/store';
 interface GameCardProp {
-  idx:number
+  state:GameCardState,
+  onClick: ()=>void
 }
 
-
-const mapStateToProps = (state:StateStore,idx:number):GameCardState => {
-  return state.board.cards[idx];
-}
-
-const GameCard = ({idx}:GameCardProp) => {
-  const state = useSelector((state:StateStore) => mapStateToProps(state,idx));
-
-  const cardStile = {
-    width: '17vw',
+const GameCard = ({state,onClick}:GameCardProp) => {
+  
+  const color = state.isColorVisible ? state.color : 'Beige'
+  const cardStile:CSSProperties = {
+    width: '18%',
     borderWidth: 'thick',
-    height: '7vw',
+    height: '5vw',
+    backgroundColor: color,
     padding: '0vw',
     margin: '0.5vw',
-    backgroundColor: state.color,
-    fontSize: '1vw',
-    color: state.color === 'Beige' ? 'Black' : 'White',
-    textDecoration: state.isLineThrough ? 'line-through' : 'none',
+    display: 'flex'
   };
+
+  const cardTextStile:CSSProperties = {
+    fontSize: '2vw',
+    fontWeight: 'bolder',
+    color: color === 'Beige' ? 'Black' : 'White',
+    textDecoration: state.isLineThrough ? 'line-through' : 'none',
+    margin: 'auto',
+    textAlign: 'center'
+  };
+
   return (
-    <Grid item>
       <Card
         className="align-items-center justify-content-center"
-        onClick={() => cardSlice.actions.flipCard()}
+        onClick={onClick}
         raised={true}
         style={cardStile}
       >
-        <Typography variant="h5" component="h2">
+        <Typography style={cardTextStile}>
           {state.text}
         </Typography>
       </Card>
-    </Grid>
   );
 }
 

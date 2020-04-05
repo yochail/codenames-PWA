@@ -1,21 +1,14 @@
-import React from 'react';
-import { Container, Grid } from '@material-ui/core';
-import { FLIP_CARD } from './app/actions';
-import { StateStore, BoardState } from './app/store';
-import { connect, useSelector } from 'react-redux';
+import React, { CSSProperties, Attributes, ReactPropTypes } from 'react';
+import { Container, Grid, Typography, Card, LinearProgress, PropTypes, CircularProgress, FormControl, OutlinedInput, InputLabel, Box, Stepper, Step, StepLabel } from '@material-ui/core';
+import { StateStore, BoardState, GAME_TYPE_PLAYER, GAME_TYPE_OPERATOR, AppConfig } from './app/store';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import GameCard from './GameCard';
+import { boardSlice } from './app/boardSlices';
 
-
-
-const mapStateToProps = (state:StateStore):BoardState => {
-  return state.board;
-}
-
-function chunk (arr:any[], len:number) {
-
+function chunk(arr: any[], len: number) {
   var chunks = [],
-      i = 0,
-      n = arr.length;
+    i = 0,
+    n = arr.length;
 
   while (i < n) {
     chunks.push(arr.slice(i, i += len));
@@ -24,115 +17,120 @@ function chunk (arr:any[], len:number) {
   return chunks;
 }
 
-const Board = () => {
-  const state = useSelector((state:StateStore) => state.board)
+const boardStyle: CSSProperties = {
+  direction: 'rtl'
+};
+
+
+interface boardHeaderProps {
+  state: BoardState,
+  config?: AppConfig
+}
+
+const OperatorHeader = ({ state }: boardHeaderProps) => {
+  const titleStyle: CSSProperties = {
+    backgroundColor: state.playingColor,
+    color: 'white'
+  };
+  return (<Card style={titleStyle}>
+    <FormControl variant="outlined">
+      <InputLabel htmlFor="component-outlined">Name</InputLabel>
+      <OutlinedInput id="component-outlined"
+        value={'ddd'}
+        //onChange={handleChange}
+        label="Name" />
+    </FormControl>
+  </Card>)
+}
+
+const PlayerHeader = ({ state }: boardHeaderProps) => {
+  if (state.requestPending) {
+    return (
+      <Box>
+        <LinearProgress />
+      </Box>)
+  } else {
+    return (
+      <Box>
+        <Typography variant="h5"> 
+          {` ${'שם קוד: '}${state.codeNameWord} ${state.codeNameNumber} `}
+        </Typography>
+        <Stepper activeStep={state.steps.length ?? 0}>
+          {Array.from(Array(state.codeNameNumber).keys()).map(i => {
+            const stepLable = i >= state.steps.length ? '' : state.steps[i].word
+            const stepError = i < state.steps.length && !state.steps[i].success
+            return <Step>
+              <StepLabel error={stepError}>
+                {stepLable}
+              </StepLabel>
+            </Step>
+
+          })}
+        </Stepper>
+      </Box >)
+  }
+}
+
+
+const ErrorHeader = () => {
   return (
-    <Container style={{minHeight:'100%'}}>
-      {chunk(state.cards,5).map((row,i)=>
-        <Grid container direction='row' alignContent='center' alignItems='center'>
-          {row.map((ws,j) => <GameCard idx={i*5+j}/>)}
-        </Grid>
-      )}
-    </Container>
-  
-  );
+    <Card style={{
+      backgroundColor: 'Red',
+      color: 'white'
+    }}>
+
+      {'שגיאת שרת. אנא נסה שנית'}
+    </Card>)
+}
+
+const Header = ({ state, config }: boardHeaderProps) => {
+  if (state.requestFailed) {
+    return <ErrorHeader />
+  } else if (config?.gameType == GAME_TYPE_OPERATOR) {
+    return <OperatorHeader state={state} />
+  } else {
+    return (<PlayerHeader state={state} />)
+  }
+}
+
+const Board = () => {
+  const state = useSelector((s: StateStore) => s.board)
+  const config = useSelector((s: StateStore) => s.config)
+  const dispatch = useDispatch()
+  const titleStyle: CSSProperties = {
+    backgroundColor: state?.playingColor ?? 'Beige',
+    color: 'white'
+  };
+
+  if (state) {
+    return (
+      <Container style={boardStyle}>
+        <Card style={titleStyle}>
+          <Header state={state} config={config} />
+        </Card>
+        {chunk(state.cards, 5).map((row, i) =>
+          <Grid container direction='row' justify='space-evenly' wrap='nowrap' key={i}>
+            {row.map((c, j) => {
+              {
+                const idx = i * 5 + j
+                return <GameCard
+                  key={idx}
+                  state={c}
+                  onClick={() =>
+                    dispatch(boardSlice.actions.flipCard(idx))
+                  }
+                />
+              }
+            })}
+          </Grid>
+        )}
+      </Container>
+
+    );
+  } else {
+    return <CircularProgress />
+  }
 }
 
 export default Board;
 
-
-// <InputGroup
-// style={{ display: player ? 'flex' : 'none'}}
-// >
-// <InputGroup.Prepend>
-//   <InputGroup.Text>{numVal}</InputGroup.Text>
-// </InputGroup.Prepend>
-// <FormControl
-//   placeholder="מילת קוד"
-//   ref={this.inputRef}
-//   onChange={v => this.setState({ codeVal: v.target.value })}
-// />
-
-// <Button
-//   variant="outline-secondary"
-//   onClick={!isLoading ? this.askCodeName : null}
-//   disabled={isLoading}
-// >
-//   <Spinner
-//     size="sm"
-//     as="span"
-//     animation="border"
-//     role="status"
-//     aria-hidden="true"
-//     style={{ display: isLoading ? 'inline-flex' : 'none' }}
-// />
-// <span>{buttonText }</span>
-// </Button>
-// <Button
-// onClick={()=>this.setState({player:!player})}
-// variant="outline-secondary"
-// >
-// Change Player mode
-// </Button>
-// </InputGroup>
-// <InputGroup
-// style={{ display: player ? 'none' : 'flex' }}
-// >
-// <InputGroup.Prepend>
-//   <InputGroup.Text>{numVal}</InputGroup.Text>
-// </InputGroup.Prepend>
-// <Button
-//   variant="outline-secondary"
-//   onClick={!isLoading ? ()=> this.createCode('Red') : null}
-//   disabled={isLoading}
-//   style={{background: 'red' }}
-// >
-//   <Spinner
-//     size="sm"
-//     as="span"
-//     animation="border"
-//     role="status"
-//     aria-hidden="true"
-//     style={{ display: isLoading ? 'inline-flex' : 'none' }}
-//   />
-// <span>{buttonText }</span>
-// </Button>
-// <Button
-//   variant="outline-secondary"
-//   onClick={!isLoading ? ()=> this.createCode('Blue') : null}
-//   disabled={isLoading}
-//   style={{ background: 'blue' }}
-// >
-//   <Spinner
-//     size="sm"
-//     as="span"
-//     animation="border"
-//     role="status"
-//     aria-hidden="true"
-//     style={{ display: isLoading ? 'flex' : 'none' }}
-// />
-// <span>{buttonText }</span>
-// </Button>
-// <Button
-// onClick={()=>this.setState({player:!player})}
-// variant="outline-secondary"
-// >
-// Change Player mode
-// </Button>
-// </InputGroup>
-
-// <Slider
-// min={1}
-// max={6}
-// defaultValue={numVal}
-// step={1}
-// ref={this.sliderRef}
-// onChange={v => this.setState({ numVal: v })}
-// trackStyle={{ height: '3vw' }}
-// railStyle={{ height: '3vw' }}
-// handleStyle={{
-//   // borderColor: 'blue',
-//   height: '3vw',
-//   width: '3vw',
-// }}
-// />

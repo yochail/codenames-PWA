@@ -1,31 +1,41 @@
 import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/toolkit';
-import { boardSlice, appSlice, cardSlice } from './slices';
+import { boardSlice } from './boardSlices';
 
 export interface GameCardState {
-  idx: number;
-  color: string,
+  idx?: number;
+  color?: string,
   text: string,
-  isUpsideDown: boolean
-  isLineThrough: boolean
+  isColorVisible?: boolean
+  isLineThrough?: boolean
+}
+export interface PlayerStep{
+  word: string,
+  success: boolean
 }
 
 export interface BoardState {
-  cards: GameCardState[]
+  playingColor: string,
+  cards: GameCardState[],
+  codeNameWord: string,
+  codeNameNumber: number,
+  requestPending?: boolean,
+  requestFailed?: boolean,
+  steps: PlayerStep[],
+  score:number
+}
+
+export const GAME_TYPE_PLAYER = 'PLAYER';
+export const GAME_TYPE_OPERATOR = 'OPERATOR';
+export interface AppConfig{
+  gameType:string
 }
 
 export interface StateStore{
-  board:BoardState
+  board?:BoardState
+  config:AppConfig
 }
 
-const reducer = combineReducers({
-  board: boardSlice.reducer,
-  app: appSlice.reducer,
-  card: cardSlice.reducer
-})
-
-export const store = configureStore({
-  reducer:reducer
-})
-
-export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk = ThunkAction<void, RootState, unknown, Action<string>>;
+export interface CodenameChallange{
+  word:string,
+  number:number
+}
