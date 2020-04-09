@@ -36,4 +36,4 @@ jobs:
         app-name: 'codenames-pwa'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_7eaf1ebd9a61491aa1c14204e88d4e3c }}
-        package: .
+        package: ./build
