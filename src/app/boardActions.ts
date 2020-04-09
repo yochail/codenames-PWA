@@ -13,8 +13,9 @@ import Words from "./words-he";
 //         await this.quaryServer('findcodesfromwords', data);
 //     }
 // }
-//const codenamesHost = "https://codenames-app.azurewebsites.net"
-const codenamesHost = "http://localhost:5000"
+const codenamesHost = "https://codenames-app.azurewebsites.net"
+//const codenamesHost = " http://127.0.0.1:5000"
+//const codenamesHost = " http://127.0.0.1:8080"
 
 const createBoardCodeWord = async (cards: GameCardState[], boardColor: string,codeWordNumber:number) => {
     const positiveWords = cards.filter(c => c.color === boardColor && c.isLineThrough != true).map(ws => ws.text);
@@ -30,7 +31,6 @@ const createBoardCodeWord = async (cards: GameCardState[], boardColor: string,co
 
 const quaryServer = async (endpoint: string, data: object) => {
     const url = `${codenamesHost}/${endpoint}`;
-    // const url = `http://127.0.0.1:5000/${endpoint}`;
     const response = await fetch(url, {
         method: 'POST',
         mode: 'cors', // no-cors, *cors, same-origin
@@ -77,14 +77,23 @@ export const createBoardCodeWordThunk = createAsyncThunk(
     }
 )
 
+export const Colors = {
+    Red : 'Red',
+    Blue : 'Blue',
+    Beige : 'Beige',
+    Black : 'Black',
+}
 
+export const getOtherColor = (currentColor:string)=>{
+    return currentColor == Colors.Red ? Colors.Blue : Colors.Red;
+}
 
 
 export const InitBoard = (gameType:string):Partial<BoardState> => {
-    let colors = Array(8).fill('Red')
-        .concat(Array(9).fill('Blue'))
-        .concat(Array(7).fill('Beige'))
-        .concat(Array(1).fill('Black'));
+    let colors = Array(8).fill(Colors.Red)
+        .concat(Array(9).fill(Colors.Blue))
+        .concat(Array(7).fill(Colors.Beige))
+        .concat(Array(1).fill(Colors.Black));
 
     colors = shuffle(colors);
     let words = [];
@@ -103,6 +112,6 @@ export const InitBoard = (gameType:string):Partial<BoardState> => {
 
     return {
         cards: wordsState,
-        playingColor: 'Blue'
+        playingColor: Colors.Blue
     }
 }

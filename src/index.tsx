@@ -7,7 +7,7 @@ import * as serviceWorker from './serviceWorker';
 import { createAction, combineReducers, configureStore } from '@reduxjs/toolkit';
 import { InitBoard, createBoardCodeWordThunk } from './app/boardActions';
 import {boardSlice } from './app/boardSlices';
-import { GAME_TYPE_PLAYER } from './app/store';
+//import { GAME_TYPE_PLAYER } from './app/store';
 import { configSlice } from './app/appSlices';
 import { GetInitAppState as GetAppConfig } from './app/appActions';
 
@@ -33,7 +33,8 @@ const appConfig = GetAppConfig()
 store.dispatch(configSlice.actions.setConfig(appConfig));
 const board = InitBoard(appConfig.gameType)
 store.dispatch(boardSlice.actions.initBoard(board));
-store.dispatch(createBoardCodeWordThunk(board));
+//store.dispatch(createBoardCodeWordThunk(board));
+//store.dispatch(createBoardCodeWordThunk(board));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

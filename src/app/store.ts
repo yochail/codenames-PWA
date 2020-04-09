@@ -17,11 +17,21 @@ export interface BoardState {
   playingColor: string,
   cards: GameCardState[],
   codeNameWord: string,
-  codeNameNumber: number,
+  codeNameNumber?: number,
   requestPending?: boolean,
   requestFailed?: boolean,
+  requestSuccess?: boolean,
   steps: PlayerStep[],
-  score:number
+  redScore:number,
+  blueScore:number,
+  isTurnEnd:boolean,
+  endGame:boolean,
+  endGameCause?:string
+}
+
+export const EndGameCause = {
+  BlackCard : "BlackCard",
+  AllCardsTurned: "AllCardsTurned",
 }
 
 export const GAME_TYPE_PLAYER = 'PLAYER';
