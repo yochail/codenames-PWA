@@ -27,7 +27,6 @@ jobs:
       run: |
         yarn upgrade
         yarn
-        yarn run start
 #        npm install
 #        npm update
 #        npm run build --if-present
