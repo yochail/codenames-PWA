@@ -140,7 +140,7 @@ const StepStepper = ({ state }: boardHeaderProps) => {
               </Step>)
             })}
           </Stepper>
-      </Grid>)
+      </Grid>
     </Grid>)
 }
 

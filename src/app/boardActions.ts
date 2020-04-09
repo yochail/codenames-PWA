@@ -13,8 +13,8 @@ import Words from "./words-he";
 //         await this.quaryServer('findcodesfromwords', data);
 //     }
 // }
-const codenamesHost = "https://codenames-app.azurewebsites.net"
-//const codenamesHost = " http://127.0.0.1:5000"
+//const codenamesHost = "https://codenames-app.azurewebsites.net"
+const codenamesHost = " http://127.0.0.1:5000"
 //const codenamesHost = " http://127.0.0.1:8080"
 
 const createBoardCodeWord = async (cards: GameCardState[], boardColor: string,codeWordNumber:number) => {
