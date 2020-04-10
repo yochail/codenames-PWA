@@ -24,7 +24,7 @@
     "typescript": "~3.8.2"
   },
   "scripts": {
-    "serve": "serve -s -n build",
+    "serve": "REACT_APP_ENV=production&serve -s -n build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
