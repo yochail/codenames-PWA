@@ -12,7 +12,7 @@ const GameCard = ({state,onClick}:GameCardProp) => {
   const cardStile:CSSProperties = {
     width: '18%',
     borderWidth: 'thick',
-    height: '5vw',
+    //height: '5vw',
     backgroundColor: color,
     padding: '0vw',
     margin: '0.5vw',
@@ -20,8 +20,6 @@ const GameCard = ({state,onClick}:GameCardProp) => {
   };
 
   const cardTextStile:CSSProperties = {
-    fontSize: '2vw',
-    fontWeight: 'bolder',
     color: color === 'Beige' ? 'Black' : 'White',
     textDecoration: state.isLineThrough ? 'line-through' : 'none',
     margin: 'auto',
@@ -35,7 +33,7 @@ const GameCard = ({state,onClick}:GameCardProp) => {
         raised={true}
         style={cardStile}
       >
-        <Typography style={cardTextStile}>
+        <Typography variant={'h6'} style={cardTextStile} >
           {state.text}
         </Typography>
       </Card>

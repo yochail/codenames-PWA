@@ -1,6 +1,5 @@
-import { StateStore, GAME_TYPE_PLAYER, AppConfig } from "./store"
+import {  GAME_TYPE_PLAYER, AppConfig } from "./store"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { initialBoardState } from "./boardSlices"
 
 const initailAppState: AppConfig = {
         gameType:GAME_TYPE_PLAYER

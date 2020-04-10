@@ -1,5 +1,4 @@
-import { StateStore, AppConfig, GAME_TYPE_PLAYER, GAME_TYPE_OPERATOR } from "./store";
-import { InitBoard } from "./boardActions";
+import {  AppConfig, GAME_TYPE_PLAYER } from "./store";
 
 export const GetInitAppState = ():AppConfig=>{
         return {

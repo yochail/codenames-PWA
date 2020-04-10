@@ -4,12 +4,13 @@ import './index.css';
 import App from './App';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
-import { createAction, combineReducers, configureStore } from '@reduxjs/toolkit';
-import { InitBoard, createBoardCodeWordThunk } from './app/boardActions';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { InitBoard } from './app/boardActions';
 import {boardSlice } from './app/boardSlices';
 //import { GAME_TYPE_PLAYER } from './app/store';
 import { configSlice } from './app/appSlices';
 import { GetInitAppState as GetAppConfig } from './app/appActions';
+
 
 const reducer = combineReducers({
   board: boardSlice.reducer,

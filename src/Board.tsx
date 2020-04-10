@@ -1,14 +1,15 @@
-import React, { CSSProperties, Attributes, ReactPropTypes, SyntheticEvent } from 'react';
-import { Container, Grid, Typography, Card, LinearProgress, PropTypes, CircularProgress, FormControl, OutlinedInput, InputLabel, Box, Stepper, Step, StepLabel, Button, Backdrop, Badge, Snackbar, DialogContentText, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
-import { StateStore, BoardState, GAME_TYPE_PLAYER, GAME_TYPE_OPERATOR, AppConfig, EndGameCause } from './app/store';
+import React, { CSSProperties, ReactPropTypes, SyntheticEvent } from 'react';
+import { Container, Grid, Typography, Card, LinearProgress, PropTypes, CircularProgress, FormControl, OutlinedInput, InputLabel, Box, Stepper, Step, StepLabel, Button, Backdrop, Badge, Snackbar, DialogContentText, Dialog, DialogTitle, DialogContent, DialogActions, Paper } from '@material-ui/core';
+import { StateStore, BoardState, GAME_TYPE_OPERATOR, AppConfig, EndGameCause } from './app/store';
 import { connect, useSelector, useDispatch } from 'react-redux';
 import GameCard from './GameCard';
 import { boardSlice } from './app/boardSlices';
 import { createBoardCodeWordThunk, Colors, InitBoard, getOtherColor } from './app/boardActions';
-import { makeStyles } from '@material-ui/core/styles';
 import StarsIcon from '@material-ui/icons/Stars';
+import { createMuiTheme, responsiveFontSizes, ThemeProvider } from '@material-ui/core/styles';
 
-
+let fontheme = createMuiTheme();
+const fontThem = responsiveFontSizes(fontheme);
 
 function chunk(arr: any[], len: number) {
   var chunks = [],
@@ -53,41 +54,47 @@ const OperatorHeader = ({ state }: boardHeaderProps) => {
 const ScoreHeader = ({ state }: boardHeaderProps) => {
 
   return (
-    <Grid container style={{
-      background: Colors.Blue,
-      height: '4vh'
-    }}>
-      <Grid item xs={2}>
-        <Badge
-          badgeContent={state.blueScore} color="primary"
-          anchorOrigin={
-            {
-              horizontal: 'left',
-              vertical: 'bottom'
-            }}
-          showZero={true}>
-          <StarsIcon />
-        </Badge>
+
+      <Grid 
+      container
+      justify='center'
+       style={{
+        background: Colors.Blue
+      }}>
+        <Grid item xs={2}>
+          <Badge
+            badgeContent={state.blueScore} color="primary"
+            anchorOrigin={
+              {
+                horizontal: 'left',
+                vertical: 'bottom'
+              }}
+            showZero={true}
+            >
+            <StarsIcon />
+          </Badge>
+        </Grid>
+        <Grid item xs={8} style={{ background: Colors.Beige }}>
+          <Typography variant="h5" style={{ color: Colors.Black }}>
+            {'שם קוד'}
+          </Typography>
+        </Grid>
+        <Grid item xs={2} style={{ background: Colors.Red }}>
+          <Badge
+            badgeContent={state.redScore}
+            color={"error"}
+            anchorOrigin={
+              {
+                horizontal: 'right',
+                vertical: 'bottom'
+              }}
+            showZero={true}
+            >
+            <StarsIcon />
+          </Badge>
+        </Grid >
       </Grid>
-      <Grid item xs={8} style={{ background: Colors.Beige }}>
-        <Typography variant="h5" style={{ color: Colors.Black }}>
-          {'שם קוד'}
-        </Typography>
-      </Grid>
-      <Grid item xs={2} style={{ background: Colors.Red }}>
-        <Badge
-          badgeContent={state.redScore}
-          color={"error"}
-          anchorOrigin={
-            {
-              horizontal: 'right',
-              vertical: 'bottom'
-            }}
-          showZero={true}>
-          <StarsIcon />
-        </Badge>
-      </Grid >
-    </Grid>)
+  )
 
 }
 
@@ -100,48 +107,54 @@ const PlayerHeader = ({ state }: boardHeaderProps) => {
       </Box>)
   } else {
     return (
-      <Grid container justify="center"
-        alignItems="center"
-        spacing={2}
-      >
-        <Grid item xs={3}>
-          <Typography variant="h4">
-            {`${state.codeNameWord} ${state.codeNameNumber}`}
 
-          </Typography>
-        </Grid>
-        <Grid item xs={2}>
-          <Button
-            variant="contained"
-            color={"primary"}
-            onClick={() => { dispatch(boardSlice.actions.nextTurn()) }}
-          >
-            {'העבר תור'}
-          </Button>
-        </Grid>
-      </Grid >)
+        <Grid container justify="center"
+          alignItems="center"
+        >
+          <Grid item style={{margin:'0.5rem'}}>
+            <Typography variant="h4">
+              {`${state.codeNameWord} ${state.codeNameNumber}`}
+
+            </Typography>
+          </Grid>
+          <Grid item style={{margin:'0.5rem'}}>
+            <Button
+              variant="contained"
+              color={"primary"}
+              onClick={() => { dispatch(boardSlice.actions.nextTurn()) }}
+            >
+              {'העבר תור'}
+            </Button>
+          </Grid>
+        </Grid >
+  
+    )
   }
 }
 
 const StepStepper = ({ state }: boardHeaderProps) => {
-    return (
+  if(state.codeNameNumber && state.codeNameNumber > 0){
+  return (
     <Grid container justify={'center'}>
       <Grid item xs={12}>
-        <Stepper 
-            activeStep={state.steps.length ?? 0}>
-            {Array.from(Array(state.codeNameNumber).keys()).map(i => {
-              const stepLable = i >= state.steps.length ? '' : state.steps[i].word
-              const stepError = i < state.steps.length && !state.steps[i].success
-              return (
+        <Stepper
+          activeStep={state.steps.length ?? 0}>
+          {Array.from(Array(state.codeNameNumber).keys()).map(i => {
+            const stepLable = i >= state.steps.length ? '' : state.steps[i].word
+            const stepError = i < state.steps.length && !state.steps[i].success
+            return (
               <Step key={i}>
                 <StepLabel error={stepError}>
                   {stepLable}
                 </StepLabel>
               </Step>)
-            })}
-          </Stepper>
+          })}
+        </Stepper>
       </Grid>
     </Grid>)
+  }else{
+    return <Box></Box>
+  }
 }
 
 
@@ -166,28 +179,30 @@ const TurnEnd = ({ state }: boardHeaderProps) => {
   const dispatch = useDispatch()
   const successSteps = state.steps.filter(s => s.success).length
   return (
-    <Grid container justify="center"
-      alignItems="center"
-      spacing={2}
-      style={{
-        backgroundColor: Colors.Beige,
-        color: 'Black',
-      }}>
-      <Grid item>
-        <Typography variant="h4">
-          {` ${state.codeNameWord} ${successSteps}/${state.codeNameNumber} `}
-        </Typography>
+    <Box>
+      <Grid container justify="center"
+        alignItems="center"
+        spacing={2}
+        style={{
+          backgroundColor: Colors.Beige,
+          color: 'Black',
+        }}>
+        <Grid item>
+          <Typography variant="h4">
+            {` ${state.codeNameWord} ${successSteps}/${state.codeNameNumber} `}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => { dispatch(boardSlice.actions.nextTurn()) }}
+          >
+            {` המשך `}
+          </Button>
+        </Grid>
       </Grid>
-      <Grid item>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => { dispatch(boardSlice.actions.nextTurn()) }}
-        >
-          {` המשך `}
-        </Button>
-      </Grid>
-    </Grid>)
+    </Box>)
 }
 
 const Header = ({ state, config }: boardHeaderProps) => {
@@ -229,7 +244,7 @@ const SuccessSnackBar = ({ state, openSnackBar, setSnackBarOpen }: boardHeaderPr
         >
           <Typography variant={"h5"}
             style={{
-              margin: '0.5rem'
+              padding: '0.5rem'
             }}>
             {lastStepSuccess ? 'מעולה!' : 'לא לזה התכוונתי..'}
           </Typography>
@@ -255,7 +270,7 @@ const PossibleEndDialog = ({ state, config }: boardHeaderProps) => {
         <DialogTitle id="alert-dialog-title">{"סוף המשחק"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-          {winner === Colors.Red ? 'אדום' : 'כחול'} {' והמנצח הוא '}
+            {winner === Colors.Red ? 'אדום' : 'כחול'} {' והמנצח הוא '}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -275,14 +290,14 @@ const PossibleEndDialog = ({ state, config }: boardHeaderProps) => {
 
 }
 
-const checkGameEnd = (state: BoardState,dispatch:any)=>{
-  const cardsEnd = state.cards.length > 0 && state.cards.filter(c=>c.color === state.playingColor && !c.isLineThrough).length == 0
-  if(cardsEnd){
+const checkGameEnd = (state: BoardState, dispatch: any) => {
+  const cardsEnd = state.cards.length > 0 && state.cards.filter(c => c.color === state.playingColor && !c.isLineThrough).length == 0
+  if (cardsEnd) {
     dispatch(boardSlice.actions.endGame(EndGameCause.AllCardsTurned));
   }
 
-  if(state.cards.filter(c=>c.color === Colors.Black && c.isLineThrough).length > 0){
-      dispatch(boardSlice.actions.endGame(EndGameCause.BlackCard));
+  if (state.cards.filter(c => c.color === Colors.Black && c.isLineThrough).length > 0) {
+    dispatch(boardSlice.actions.endGame(EndGameCause.BlackCard));
   }
 }
 
@@ -293,7 +308,11 @@ const Board = () => {
   const [openSnackBar, setSnackBarOpen] = React.useState(true);
   const titleStyle: CSSProperties = {
     backgroundColor: state?.playingColor ?? Colors.Beige,
-    color: 'white'
+    color: 'white',
+    padding: '0px',
+    margin: '1%',
+    justifySelf: 'center',
+    flexGrow: 1,
   };
 
   if (state) {
@@ -301,41 +320,47 @@ const Board = () => {
       dispatch(createBoardCodeWordThunk(state!));
     }
 
-    checkGameEnd(state,dispatch);
-    
+    checkGameEnd(state, dispatch);
+
     return (
-      <Container style={boardStyle}>
-        <PossibleEndDialog state={state} config={config!} />
-        <Card style={titleStyle}>
-          <ScoreHeader state={state} />
-          <Header state={state} config={config} />
-        </Card>
-        <SuccessSnackBar
-          state={state}
-          openSnackBar={openSnackBar}
-          setSnackBarOpen={setSnackBarOpen} />
-        {chunk(state.cards, 5).map((row, i) =>
-          <Grid container direction='row' justify='space-evenly' wrap='nowrap' key={i}>
-            {row.map((c, j) => {
-              {
-                const idx = i * 5 + j
-                return <GameCard
-                  key={idx}
-                  state={c}
-                  onClick={() => {
-                    if (!state.isTurnEnd && state.requestSuccess) {
+      <ThemeProvider theme={fontThem}>
+        <Container style={boardStyle}>
+          <PossibleEndDialog state={state} config={config!} />
+          <Box>
+            <Box style={titleStyle}>
+              <ScoreHeader state={state} />
+            </Box>
+            <Box style={titleStyle}>
+              <Header state={state} config={config} />
+            </Box>
+          </Box>
+          <SuccessSnackBar
+            state={state}
+            openSnackBar={openSnackBar}
+            setSnackBarOpen={setSnackBarOpen} />
+          {chunk(state.cards, 5).map((row, i) =>
+            <Grid container direction='row' justify='space-evenly' wrap='nowrap' key={i}>
+              {row.map((c, j) => {
+                {
+                  const idx = i * 5 + j
+                  return <GameCard
+                    key={idx}
+                    state={c}
+                    onClick={() => {
+                      if (!state.isTurnEnd && state.requestSuccess) {
                         setSnackBarOpen(true)
                         dispatch(boardSlice.actions.flipCard(idx));
+                      }
                     }
-                  }
-                  }
-                />
-              }
-            })}
-          </Grid>
-        )}
-        <StepStepper state={state} />
-      </Container>
+                    }
+                  />
+                }
+              })}
+            </Grid>
+          )}
+          <StepStepper state={state} />
+        </Container>
+      </ThemeProvider>
     );
   } else {
     return <CircularProgress />
