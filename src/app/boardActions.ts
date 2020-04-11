@@ -68,7 +68,8 @@ const shuffle = (array: any[]) => {
 export const createBoardCodeWordThunk = createAsyncThunk(
     'board/createBoardCodeWord',
     async (state:Partial<BoardState>):Promise<CodenameChallange> => {
-        const response = await createBoardCodeWord(state.cards!,state.playingColor!,state.codeNameNumber ?? 3)
+        //TODO state.codeNameNumber ?? 
+        const response = await createBoardCodeWord(state.cards!,state.playingColor!,3)
         console.log(response)
         return {
             word:response[0],
@@ -88,6 +89,19 @@ export const getOtherColor = (currentColor:string)=>{
     return currentColor == Colors.Red ? Colors.Blue : Colors.Red;
 }
 
+export const initialBoardState: BoardState = {
+    cards: [],
+    playingColor: 'Blue',
+    codeNameWord: '',
+    steps: [],
+    blueScore: 0,
+    redScore: 0,
+    isTurnEnd:false,
+    endGame:false,
+    requestFailed: undefined,
+    requestSuccess: undefined,
+    requestPending: undefined
+};
 
 export const InitBoard = (gameType:string):Partial<BoardState> => {
     let colors = Array(8).fill(Colors.Red)
@@ -111,7 +125,8 @@ export const InitBoard = (gameType:string):Partial<BoardState> => {
         }));
 
     return {
+        ...initialBoardState,
         cards: wordsState,
-        playingColor: Colors.Blue
+        playingColor: Colors.Blue,
     }
 }

@@ -1,19 +1,8 @@
-import { BoardState, GameCardState, StateStore, GAME_TYPE_PLAYER, CodenameChallange } from "./store";
-import { createSlice, PayloadAction, createAction } from "@reduxjs/toolkit";
-import GameCard from "../GameCard";
-import { createBoardCodeWordThunk, getOtherColor, Colors } from "./boardActions";
-import { useDispatch } from "react-redux";
+import { BoardState, CodenameChallange } from "./store";
+import { createSlice, PayloadAction, } from "@reduxjs/toolkit";
+import { createBoardCodeWordThunk, getOtherColor, Colors, initialBoardState } from "./boardActions";
 
-export const initialBoardState: BoardState = {
-    cards: [],
-    playingColor: 'Blue',
-    codeNameWord: '',
-    steps: [],
-    blueScore: 0,
-    redScore: 0,
-    isTurnEnd:false,
-    endGame:false
-};
+
 
 export const boardSlice = createSlice({
     name: 'board',
@@ -28,10 +17,13 @@ export const boardSlice = createSlice({
         flipCard: (state: BoardState, action: PayloadAction<number>) => {
             const card = state.cards[action.payload];
             const success = card.color === state.playingColor
-            const scoreChange = success ? (state.steps.length * 2 + 1) : 0;
             const turnEnd = !success || state.steps.length + 1 === state.codeNameNumber;
-            const blueScore = state.playingColor == Colors.Blue ? state.blueScore+scoreChange : state.blueScore
-            const redScore = state.playingColor == Colors.Red ? state.redScore+scoreChange : state.redScore
+            // TODO for one player
+            //const scoreChange = success ? (state.steps.length * 2 + 1) : 0;
+            // const blueScore = state.playingColor == Colors.Blue ? state.blueScore+scoreChange : state.blueScore
+            // const redScore = state.playingColor == Colors.Red ? state.redScore+scoreChange : state.redScore
+            const blueScore = card.color == Colors.Blue ? state.blueScore+1 : state.blueScore
+            const redScore = card.color == Colors.Red ? state.redScore+1 : state.redScore
             return {
                 ...state,
                 steps: [...state.steps, { success: success, word: card.text }],

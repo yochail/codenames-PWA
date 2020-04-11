@@ -55,45 +55,45 @@ const ScoreHeader = ({ state }: boardHeaderProps) => {
 
   return (
 
-      <Grid 
+    <Grid
       container
       justify='center'
-       style={{
+      style={{
         background: Colors.Blue
       }}>
-        <Grid item xs={2}>
-          <Badge
-            badgeContent={state.blueScore} color="primary"
-            anchorOrigin={
-              {
-                horizontal: 'left',
-                vertical: 'bottom'
-              }}
-            showZero={true}
-            >
-            <StarsIcon />
-          </Badge>
-        </Grid>
-        <Grid item xs={8} style={{ background: Colors.Beige }}>
-          <Typography variant="h5" style={{ color: Colors.Black }}>
-            {'שם קוד'}
-          </Typography>
-        </Grid>
-        <Grid item xs={2} style={{ background: Colors.Red }}>
-          <Badge
-            badgeContent={state.redScore}
-            color={"error"}
-            anchorOrigin={
-              {
-                horizontal: 'right',
-                vertical: 'bottom'
-              }}
-            showZero={true}
-            >
-            <StarsIcon />
-          </Badge>
-        </Grid >
+      <Grid item xs={2}>
+        <Badge
+          badgeContent={state.blueScore} color="primary"
+          anchorOrigin={
+            {
+              horizontal: 'left',
+              vertical: 'bottom'
+            }}
+          showZero={true}
+        >
+          <StarsIcon />
+        </Badge>
       </Grid>
+      <Grid item xs={8} style={{ background: Colors.Beige }}>
+        <Typography variant="h5" style={{ color: Colors.Black }}>
+          {'שם קוד'}
+        </Typography>
+      </Grid>
+      <Grid item xs={2} style={{ background: Colors.Red }}>
+        <Badge
+          badgeContent={state.redScore}
+          color={"error"}
+          anchorOrigin={
+            {
+              horizontal: 'right',
+              vertical: 'bottom'
+            }}
+          showZero={true}
+        >
+          <StarsIcon />
+        </Badge>
+      </Grid >
+    </Grid>
   )
 
 }
@@ -108,51 +108,51 @@ const PlayerHeader = ({ state }: boardHeaderProps) => {
   } else {
     return (
 
-        <Grid container justify="center"
-          alignItems="center"
-        >
-          <Grid item style={{margin:'0.5rem'}}>
-            <Typography variant="h4">
-              {`${state.codeNameWord} ${state.codeNameNumber}`}
+      <Grid container justify="center"
+        alignItems="center"
+      >
+        <Grid item style={{ margin: '0.5rem' }}>
+          <Typography variant="h5">
+            {`${state.codeNameWord} ${state.codeNameNumber}`}
 
-            </Typography>
-          </Grid>
-          <Grid item style={{margin:'0.5rem'}}>
-            <Button
-              variant="contained"
-              color={"primary"}
-              onClick={() => { dispatch(boardSlice.actions.nextTurn()) }}
-            >
-              {'העבר תור'}
-            </Button>
-          </Grid>
-        </Grid >
-  
+          </Typography>
+        </Grid>
+        <Grid item style={{ margin: '0.5rem' }}>
+          <Button
+            variant="contained"
+            color={"primary"}
+            onClick={() => { dispatch(boardSlice.actions.nextTurn()) }}
+          >
+            {'העבר תור'}
+          </Button>
+        </Grid>
+      </Grid >
+
     )
   }
 }
 
 const StepStepper = ({ state }: boardHeaderProps) => {
-  if(state.codeNameNumber && state.codeNameNumber > 0){
-  return (
-    <Grid container justify={'center'}>
-      <Grid item xs={12}>
-        <Stepper
-          activeStep={state.steps.length ?? 0}>
-          {Array.from(Array(state.codeNameNumber).keys()).map(i => {
-            const stepLable = i >= state.steps.length ? '' : state.steps[i].word
-            const stepError = i < state.steps.length && !state.steps[i].success
-            return (
-              <Step key={i}>
-                <StepLabel error={stepError}>
-                  {stepLable}
-                </StepLabel>
-              </Step>)
-          })}
-        </Stepper>
-      </Grid>
-    </Grid>)
-  }else{
+  if (state.codeNameNumber && state.codeNameNumber > 0) {
+    return (
+      <Grid container justify={'center'}>
+        <Grid item xs={12}>
+          <Stepper
+            activeStep={state.steps.length ?? 0}>
+            {Array.from(Array(state.codeNameNumber).keys()).map(i => {
+              const stepLable = i >= state.steps.length ? '' : state.steps[i].word
+              const stepError = i < state.steps.length && !state.steps[i].success
+              return (
+                <Step key={i}>
+                  <StepLabel error={stepError}>
+                    {stepLable}
+                  </StepLabel>
+                </Step>)
+            })}
+          </Stepper>
+        </Grid>
+      </Grid>)
+  } else {
     return <Box></Box>
   }
 }
@@ -270,7 +270,7 @@ const PossibleEndDialog = ({ state, config }: boardHeaderProps) => {
         <DialogTitle id="alert-dialog-title">{"סוף המשחק"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            {winner === Colors.Red ? 'אדום' : 'כחול'} {' והמנצח הוא '}
+            {` והמנצח הוא: ${winner === Colors.Red ? 'אדום':'כחול'}`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -291,13 +291,15 @@ const PossibleEndDialog = ({ state, config }: boardHeaderProps) => {
 }
 
 const checkGameEnd = (state: BoardState, dispatch: any) => {
-  const cardsEnd = state.cards.length > 0 && state.cards.filter(c => c.color === state.playingColor && !c.isLineThrough).length == 0
-  if (cardsEnd) {
-    dispatch(boardSlice.actions.endGame(EndGameCause.AllCardsTurned));
-  }
+  if (!state.endGame) {
+    const cardsEnd = state.cards.length > 0 && state.cards.filter(c => c.color === state.playingColor && !c.isLineThrough).length == 0
+    if (cardsEnd) {
+      dispatch(boardSlice.actions.endGame(EndGameCause.AllCardsTurned));
+    }
 
-  if (state.cards.filter(c => c.color === Colors.Black && c.isLineThrough).length > 0) {
-    dispatch(boardSlice.actions.endGame(EndGameCause.BlackCard));
+    if (state.cards.filter(c => c.color === Colors.Black && c.isLineThrough).length > 0) {
+      dispatch(boardSlice.actions.endGame(EndGameCause.BlackCard));
+    }
   }
 }
 
